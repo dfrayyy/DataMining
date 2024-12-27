@@ -11,8 +11,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 
 # Streamlit App Title
-st.title("Dashboard: K-Means Clustering & Logistic Regression")
-st.write("Upload your CSV file to perform K-Means clustering and Logistic Regression.")
+st.title("Analisis  K-Means Clustering & Logistic Regression")
+st.write("Upload File CSV ")
 
 # File Upload Section
 uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
@@ -20,11 +20,11 @@ uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
 if uploaded_file:
     # Load the dataset
     data = pd.read_csv(uploaded_file)
-    st.write("### Dataset Overview:")
+    st.write("Dataset Overview:")
     st.write(data.head())
 
     # Select Columns for Analysis
-    st.write("### Select Columns for Analysis")
+    st.write("Select Columns untuk di Analysis")
     selected_columns = st.multiselect(
         "Select numeric columns to use for K-Means and Logistic Regression:",
         options=data.columns.tolist(),
@@ -33,8 +33,7 @@ if uploaded_file:
 
     if selected_columns:
         # Preprocess Data
-        st.write("### Data Preprocessing")
-        data = data.dropna(subset=selected_columns)  # Drop rows with missing values in selected columns
+        st.write(" Data Preprocessing")
         scaler = StandardScaler()
         data_scaled = scaler.fit_transform(data[selected_columns])
 
@@ -49,10 +48,10 @@ if uploaded_file:
 
         data['Cluster'] = clusters
         silhouette_avg = silhouette_score(data_scaled, clusters)
-        st.write(f"### Silhouette Score: {silhouette_avg:.2f}")
+        st.write(f"Silhouette Score: {silhouette_avg:.2f}")
 
         # Visualize Clusters
-        st.write("### Cluster Visualization")
+        st.write("Cluster Visualization")
         if len(selected_columns) >= 2:
             x_axis = st.selectbox("Select X-axis for visualization:", selected_columns)
             y_axis = st.selectbox("Select Y-axis for visualization:", selected_columns)
@@ -64,17 +63,8 @@ if uploaded_file:
             st.write("Please select at least two columns for visualization.")
 
         # --- Logistic Regression ---
-        st.write("## Logistic Regression")
+        st.write("Logistic Regression")
         target_column = st.selectbox("Select target column for Logistic Regression:", data.columns)
-        
-        # Ensure the target column is suitable for classification
-        if data[target_column].nunique() <= 1:
-            st.error("The target column must have at least two unique classes for classification.")
-        else:
-            # Encode Target Column if Necessary
-            if data[target_column].dtype == 'object':
-                le = LabelEncoder()
-                data[target_column] = le.fit_transform(data[target_column])
 
         if target_column:
             # Encode Target Column if Necessary
@@ -92,17 +82,17 @@ if uploaded_file:
 
             # Evaluate Logistic Regression
             accuracy = accuracy_score(y_test, y_pred)
-            st.write(f"### Logistic Regression Accuracy: {accuracy:.2f}")
-
-            # Display Confusion Matrix
-            sfig, ax = plt.subplots(figsize=(6, 4))
-            sns.heatmap(confusion_matrix(y_test, y_pred), annot=True, cmap='Blues', fmt='d', ax=ax)
-            ax.set_title("Confusion Matrix")
-            plt.title("Confusion Matrix")
-            plt.xlabel("Predicted")
-            plt.ylabel("Actual")
-            st.pyplot(fig)
+            st.write(f"Logistic Regression Accuracy: {accuracy:.2f}")
 
             # Classification Report
-            st.write("### Classification Report")
+            st.write("Classification Report")
             st.text(classification_report(y_test, y_pred))
+
+            # Display Confusion Matrix
+            st.write(" Confusion Matrix")
+            fig, ax = plt.subplots(figsize=(6, 4))
+            sns.heatmap(confusion_matrix(y_test, y_pred), annot=True, cmap='Blues', fmt='d', ax=ax)
+            ax.set_title("Confusion Matrix")
+            ax.set_xlabel("Predicted")
+            ax.set_ylabel("Actual")
+            st.pyplot(fig)
